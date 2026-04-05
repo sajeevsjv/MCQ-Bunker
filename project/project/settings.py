@@ -2,6 +2,7 @@
 Django settings for MCQ Question Handling System.
 """
 
+import os
 from pathlib import Path
 from datetime import timedelta
 import dj_database_url
@@ -125,4 +126,6 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
