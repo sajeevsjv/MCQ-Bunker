@@ -1,22 +1,66 @@
 """
-URL configuration for project project.
+MCQ Question Handling System — Main URL Configuration
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+Admin API:    /api/admin/...
+Student API:  /api/student/...
+Shared:       /api/logout/
+Django Admin: /admin/
 """
+
 from django.contrib import admin
 from django.urls import path
 
+# ── accounts ──────────────────────────────────────────────────────────────────
+from accounts.urls import (
+    admin_urlpatterns as accounts_admin_urls,
+    student_urlpatterns as accounts_student_urls,
+    shared_urlpatterns,
+)
+
+# ── subjects ──────────────────────────────────────────────────────────────────
+from subjects.urls import (
+    admin_urlpatterns as subjects_admin_urls,
+    student_urlpatterns as subjects_student_urls,
+)
+
+# ── questions ─────────────────────────────────────────────────────────────────
+from questions.urls import (
+    admin_urlpatterns as questions_admin_urls,
+    student_urlpatterns as questions_student_urls,
+)
+
+# ── exams ─────────────────────────────────────────────────────────────────────
+from exams.urls import (
+    admin_urlpatterns as exams_admin_urls,
+    student_urlpatterns as exams_student_urls,
+)
+
+# ─── Assemble URL patterns ────────────────────────────────────────────────────
+
+admin_patterns = (
+    accounts_admin_urls
+    + subjects_admin_urls
+    + questions_admin_urls
+    + exams_admin_urls
+)
+
+student_patterns = (
+    accounts_student_urls
+    + subjects_student_urls
+    + questions_student_urls
+    + exams_student_urls
+)
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # Django admin panel
+    path("admin/", admin.site.urls),
+
+    # REST API — shared
+    *[path(f"api/{p.pattern}", p.callback, name=p.name) for p in shared_urlpatterns],
+
+    # REST API — admin namespace
+    *[path(f"api/admin/{p.pattern}", p.callback, name=p.name) for p in admin_patterns],
+
+    # REST API — student namespace
+    *[path(f"api/student/{p.pattern}", p.callback, name=p.name) for p in student_patterns],
 ]
