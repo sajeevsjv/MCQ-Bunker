@@ -4,6 +4,7 @@ Django settings for MCQ Question Handling System.
 
 from pathlib import Path
 from datetime import timedelta
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -65,11 +66,17 @@ TEMPLATES = [
 WSGI_APPLICATION = 'project.wsgi.application'
 
 # ─── Database ─────────────────────────────────────────────────────────────────
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default='postgresql://neondb_owner:npg_H25VSDoXiqZP@ep-royal-hill-an3jze56-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
+    )
 }
 
 # ─── Custom User Model ────────────────────────────────────────────────────────
