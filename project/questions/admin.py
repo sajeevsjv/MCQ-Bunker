@@ -20,3 +20,5 @@ class QuestionAdmin(admin.ModelAdmin):
 class ChoiceAdmin(admin.ModelAdmin):
     list_display = ["id", "question", "option_text", "is_correct"]
     list_filter = ["is_correct"]
+            
+        
