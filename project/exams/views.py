@@ -51,7 +51,6 @@ class SubmitAnswerView(APIView):
                 "message": "Answer saved." if created else "Answer updated.",
                 "question_id": question.id,
                 "selected_choice_id": choice.id,
-                "is_correct": choice.is_correct,
             },
             status=status.HTTP_200_OK,
         )
@@ -142,6 +141,7 @@ class SubmitExamView(APIView):
                 "percentage": round(percentage * 100, 1),
                 "status": result_status,
                 "result_id": result.id,
+                "attempted_at": result.attempted_at,
             },
             status=status.HTTP_201_CREATED,
         )
