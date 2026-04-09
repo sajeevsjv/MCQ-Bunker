@@ -18,6 +18,7 @@ ALLOWED_HOSTS = ["*"]
 # ─── Applications ─────────────────────────────────────────────────────────────
 INSTALLED_APPS = [
     'jazzmin',
+    
     # Project apps
     'accounts',
     'subjects',

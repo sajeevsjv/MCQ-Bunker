@@ -6,7 +6,7 @@ from .models import Subject, Chapter
 from .serializers import SubjectSerializer, ChapterSerializer, ChapterDetailSerializer
 from accounts.permissions import IsAdmin, IsStudent
 from exams.models import Result, RetakeRequest
-
+from rest_framework.decorators import api_view
 
 # ─── ADMIN: Subject endpoints ──────────────────────────────────────────────────
 
@@ -47,6 +47,12 @@ class AdminChapterUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
 
 
 # ─── STUDENT: Chapter list with retake_status ─────────────────────────────────
+@api_view(['GET'])
+def StudentSubjectList(request):
+    subjects = Subject.objects.all()
+    serializer = SubjectSerializer(subjects,many = True)
+    return Response(serializer.data,status=status.HTTP_200_OK)
+
 
 class StudentChapterListView(generics.ListAPIView):
     """
