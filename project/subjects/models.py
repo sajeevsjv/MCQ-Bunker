@@ -9,6 +9,7 @@ class Subject(models.Model):
 
     class Meta:
         ordering = ["name"]
+        verbose_name = "Chapter"
 
 
 class Chapter(models.Model):
@@ -27,3 +28,4 @@ class Chapter(models.Model):
     class Meta:
         ordering = ["subject", "name"]
         unique_together = ["subject", "name"]
+        verbose_name = "Sub Chapter"

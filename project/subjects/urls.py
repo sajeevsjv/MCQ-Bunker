@@ -4,6 +4,7 @@ from .views import (
     AdminChapterCreateView,
     AdminChapterUpdateDeleteView,
     StudentChapterListView,
+    StudentSubjectList
 )
 
 admin_urlpatterns = [
@@ -14,4 +15,5 @@ admin_urlpatterns = [
 
 student_urlpatterns = [
     path("chapters/", StudentChapterListView.as_view(), name="student-chapter-list"),
+    path("subjects/",StudentSubjectList,name="student subjects")
 ]
