@@ -1,160 +1,307 @@
 import React, { useState } from 'react';
-import { Mail, Lock, User, ArrowRight } from 'lucide-react';
+import { Mail, Lock, ArrowRight, BookOpen, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Navigate } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
+import { motion } from 'framer-motion';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPass, setShowPass] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { login, isAuthenticated } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
-  // If already authenticated, bounce them to dashboard
-  if (isAuthenticated) {
-    return <Navigate to="/" replace />;
-  }
+  if (isAuthenticated) return <Navigate to="/" replace />;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    // Call the context login function which sets token & alerts
     const success = await login(email, password);
-    
     setIsLoading(false);
-    if (success) {
-      navigate('/');
-    }
+    if (success) navigate('/');
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 pb-12 pt-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl w-full mx-auto flex shadow-2xl rounded-2xl overflow-hidden bg-white min-h-[600px]">
-        {/* Left Side - Illustration/Branding */}
-        <div className="hidden lg:flex w-1/2 bg-indigo-600 items-center justify-center p-12 relative overflow-hidden">
-          {/* Background pattern */}
-          <div className="absolute inset-0 opacity-20">
-            <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" width="100" height="100">
-              <defs>
-                <pattern id="p" width="100" height="100" patternUnits="userSpaceOnUse">
-                  <circle cx="50" cy="50" r="40" fill="none" stroke="#ffffff" strokeWidth="2" />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#p)" />
-            </svg>
-          </div>
-          
-          <div className="relative z-10 text-white">
-            <h1 className="text-4xl font-extrabold mb-6 tracking-tight">MCQ Bunker</h1>
-            <p className="text-indigo-100 text-lg mb-8 leading-relaxed">
-              Enter your portal to master new skills, take assessments, and track your progress in real-time.
-            </p>
-            
-            <div className="space-y-6">
-              <div className="flex items-center space-x-4">
-                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
-                  <User size={20} />
-                </div>
-                <span className="text-indigo-50 font-medium">Student Portal Access</span>
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '24px 16px',
+      position: 'relative',
+      overflow: 'hidden',
+      background: 'var(--bg-base)',
+    }}>
+      {/* Animated background blobs */}
+      <div className="bg-mesh" />
+
+      {/* Extra decorative orbs */}
+      <div style={{
+        position: 'fixed', top: '10%', right: '5%',
+        width: 350, height: 350, borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(118,75,162,0.25) 0%, transparent 70%)',
+        filter: 'blur(60px)', pointerEvents: 'none',
+      }} />
+      <div style={{
+        position: 'fixed', bottom: '5%', left: '8%',
+        width: 280, height: 280, borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(99,102,241,0.2) 0%, transparent 70%)',
+        filter: 'blur(60px)', pointerEvents: 'none',
+      }} />
+
+      {/* Theme toggle — top right */}
+      <button
+        onClick={toggleTheme}
+        aria-label="Toggle theme"
+        className="theme-toggle"
+        style={{ position: 'fixed', top: 20, right: 20 }}
+        title={isDark ? 'Switch to Light' : 'Switch to Dark'}
+      >
+        <span className={`theme-toggle-thumb ${isDark ? 'dark-mode' : ''}`}>
+          {isDark ? '🌙' : '☀️'}
+        </span>
+      </button>
+
+      <div style={{
+        display: 'flex',
+        width: '100%',
+        maxWidth: 900,
+        minHeight: 560,
+        borderRadius: 28,
+        overflow: 'hidden',
+        boxShadow: 'var(--shadow-lg)',
+        border: '1px solid var(--border-default)',
+      }}>
+
+        {/* ── Left panel — branding ─────────────────────────── */}
+        <div style={{
+          display: 'none',
+          width: '45%',
+          background: 'var(--gradient-hero)',
+          padding: '48px 40px',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          position: 'relative',
+          overflow: 'hidden',
+        }} className="login-left-panel">
+          {/* Decorative circles */}
+          <div style={{
+            position: 'absolute', top: -60, right: -60,
+            width: 260, height: 260, borderRadius: '50%',
+            border: '1px solid rgba(255,255,255,0.15)',
+          }} />
+          <div style={{
+            position: 'absolute', bottom: -40, left: -40,
+            width: 200, height: 200, borderRadius: '50%',
+            border: '1px solid rgba(255,255,255,0.1)',
+          }} />
+          <div style={{
+            position: 'absolute', top: '40%', left: '20%',
+            width: 120, height: 120, borderRadius: '50%',
+            border: '1px solid rgba(255,255,255,0.08)',
+          }} />
+
+          {/* Logo */}
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 12, marginBottom: 40,
+            }}>
+              <div style={{
+                width: 48, height: 48, borderRadius: 14,
+                background: 'rgba(255,255,255,0.2)',
+                backdropFilter: 'blur(8px)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                border: '1px solid rgba(255,255,255,0.35)',
+              }}>
+                <BookOpen size={24} color="#fff" />
               </div>
+              <span style={{ fontSize: '1.4rem', fontWeight: 900, color: '#fff', letterSpacing: '-0.03em' }}>
+                MCQ Bunker
+              </span>
             </div>
+
+            <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#fff', margin: '0 0 16px', lineHeight: 1.2 }}>
+              Master Every<br />Subject with Ease
+            </h2>
+            <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.95rem', lineHeight: 1.7, margin: 0 }}>
+              Take chapter-wise MCQ assessments, track your scores, and sharpen your knowledge — all in one place.
+            </p>
+          </div>
+
+          {/* Feature pills */}
+          <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {['📚 Chapter-wise Exams', '📊 Performance Analytics', '🏆 Score Tracking'].map(f => (
+              <div key={f} style={{
+                display: 'inline-flex', alignItems: 'center', gap: 10,
+                padding: '10px 16px',
+                background: 'rgba(255,255,255,0.12)',
+                backdropFilter: 'blur(8px)',
+                borderRadius: 12,
+                border: '1px solid rgba(255,255,255,0.2)',
+                color: '#fff',
+                fontSize: '0.85rem',
+                fontWeight: 500,
+              }}>
+                {f}
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Right Side - Login Form */}
-        <div className="w-full lg:w-1/2 p-8 sm:p-12 flex flex-col justify-center">
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back</h2>
-            <p className="text-gray-500">Please enter your details to sign in.</p>
+        {/* ── Right panel — form ────────────────────────────── */}
+        <motion.div
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.45, ease: 'easeOut' }}
+          style={{
+            flex: 1,
+            background: 'var(--bg-surface)',
+            backdropFilter: 'var(--glass-blur)',
+            WebkitBackdropFilter: 'var(--glass-blur)',
+            padding: 'clamp(32px, 6%, 56px)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+          }}
+        >
+          {/* Mobile logo */}
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 10,
+            marginBottom: 36,
+          }} className="login-mobile-logo">
+            <div className="logo-icon" style={{ width: 36, height: 36, borderRadius: 10 }}>
+              <BookOpen size={18} color="#fff" />
+            </div>
+            <span style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--text-primary)' }}>MCQ Bunker</span>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <div style={{ marginBottom: 32 }}>
+            <h2 style={{
+              fontSize: 'clamp(1.5rem, 3vw, 1.9rem)',
+              fontWeight: 800,
+              color: 'var(--text-primary)',
+              margin: '0 0 8px',
+              letterSpacing: '-0.03em',
+            }}>
+              Welcome back 👋
+            </h2>
+            <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '0.9rem' }}>
+              Sign in to continue to your student portal.
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label style={{
+                display: 'block', marginBottom: 8,
+                fontSize: '0.82rem', fontWeight: 600,
+                color: 'var(--text-secondary)',
+                letterSpacing: '0.02em',
+              }}>
                 Email Address
               </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
-                </div>
+              <div style={{ position: 'relative' }}>
+                <Mail size={17} style={{
+                  position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)',
+                  color: 'var(--text-muted)',
+                }} />
                 <input
                   type="email"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-colors"
+                  onChange={e => setEmail(e.target.value)}
+                  className="input-field"
                   placeholder="you@example.com"
                 />
               </div>
             </div>
 
+            {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label style={{
+                display: 'block', marginBottom: 8,
+                fontSize: '0.82rem', fontWeight: 600,
+                color: 'var(--text-secondary)',
+                letterSpacing: '0.02em',
+              }}>
                 Password
               </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
-                </div>
+              <div style={{ position: 'relative' }}>
+                <Lock size={17} style={{
+                  position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)',
+                  color: 'var(--text-muted)',
+                }} />
                 <input
-                  type="password"
+                  type={showPass ? 'text' : 'password'}
                   required
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-colors"
+                  onChange={e => setPassword(e.target.value)}
+                  className="input-field"
                   placeholder="••••••••"
+                  style={{ paddingRight: 48 }}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPass(p => !p)}
+                  style={{
+                    position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)',
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    color: 'var(--text-muted)', padding: 4,
+                    display: 'flex', alignItems: 'center',
+                  }}
+                >
+                  {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded cursor-pointer"
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900 cursor-pointer">
-                  Remember me
-                </label>
-              </div>
-
-              <div className="text-sm">
-                <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500 transition-colors">
-                  Forgot password?
-                </a>
-              </div>
+            {/* Remember / forgot */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                <input type="checkbox" id="remember-me" style={{ accentColor: 'var(--brand-500)' }} />
+                <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>Remember me</span>
+              </label>
+              <a href="#" style={{ fontSize: '0.82rem', color: 'var(--brand-500)', fontWeight: 600, textDecoration: 'none' }}>
+                Forgot password?
+              </a>
             </div>
 
-            <button
+            {/* Submit */}
+            <motion.button
               type="submit"
               disabled={isLoading}
-              className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-200 mt-2"
+              className="btn-primary"
+              whileHover={{ scale: 1.018 }}
+              whileTap={{ scale: 0.98 }}
+              style={{ marginTop: 4, padding: '13px 20px', fontSize: '0.9rem' }}
             >
               {isLoading ? (
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
+                <>
+                  <span className="spinner" style={{ width: 18, height: 18, borderWidth: 2 }} />
+                  Signing in...
+                </>
               ) : (
                 <>
                   Sign In
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  <ArrowRight size={17} />
                 </>
               )}
-            </button>
+            </motion.button>
           </form>
-          
-          <p className="mt-8 text-center text-sm text-gray-600">
-            Not a member?{' '}
-            <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500 transition-colors">
-              Register for an account
-            </a>
-          </p>
-        </div>
+        </motion.div>
       </div>
+
+      {/* Responsive: show left panel on lg+ */}
+      <style>{`
+        @media (min-width: 900px) {
+          .login-left-panel { display: flex !important; }
+          .login-mobile-logo { display: none !important; }
+        }
+      `}</style>
     </div>
   );
 };
