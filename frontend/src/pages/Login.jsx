@@ -265,9 +265,9 @@ const Login = () => {
                 <input type="checkbox" id="remember-me" style={{ accentColor: 'var(--brand-500)' }} />
                 <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>Remember me</span>
               </label>
-              <a href="#" style={{ fontSize: '0.82rem', color: 'var(--brand-500)', fontWeight: 600, textDecoration: 'none' }}>
-                Forgot password?
-              </a>
+              <span style={{ fontSize: '0.82rem', color: 'var(--brand-500)', fontWeight: 600, textDecoration: 'none' }}>
+                Contact admin for login credentials
+              </span>
             </div>
 
             {/* Submit */}
