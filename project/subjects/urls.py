@@ -14,6 +14,6 @@ admin_urlpatterns = [
 ]
 
 student_urlpatterns = [
-    path("chapters/", StudentChapterListView.as_view(), name="student-chapter-list"),
+    path("chapters/<int:subject_id>/", StudentChapterListView.as_view(), name="student-chapter-list"),
     path("subjects/",StudentSubjectList,name="student subjects")
 ]

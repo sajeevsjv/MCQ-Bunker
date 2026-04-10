@@ -56,9 +56,9 @@ def StudentSubjectList(request):
 
 class StudentChapterListView(generics.ListAPIView):
     """
-    GET /api/student/chapters/
+    GET /api/student/chapters/<subject_id>/
 
-    Returns all chapters. Each chapter includes a `retake_status` field:
+    Returns all chapters for the given subject. Each chapter includes a `retake_status` field:
       "approved"      → Never attempted. Student can freely take the exam.
       "already_taken" → Exam completed, no retake request sent yet.
       "pending"       → Retake request submitted; waiting for admin decision.
@@ -69,7 +69,8 @@ class StudentChapterListView(generics.ListAPIView):
     serializer_class = ChapterDetailSerializer
 
     def get_queryset(self):
-        return Chapter.objects.select_related("subject").all()
+        subject_id = self.kwargs.get("subject_id")
+        return Chapter.objects.select_related("subject").filter(subject_id=subject_id)
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
