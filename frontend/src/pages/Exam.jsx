@@ -36,18 +36,40 @@ const Exam = () => {
   const [loading, setLoading] = useState(true);
   const [questions, setQuestions] = useState([]);
   const [chapterName, setChapterName] = useState("");
-  const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
-  const [answers, setAnswers] = useState({}); // { questionId: choiceId }
+  const [currentQuestionIdx, setCurrentQuestionIdx] = useState(() => {
+    const saved = localStorage.getItem(`exam_current_q_${chapterId}`);
+    return saved !== null ? parseInt(saved, 10) : 0;
+  });
+  const [answers, setAnswers] = useState(() => {
+    const saved = localStorage.getItem(`exam_answers_${chapterId}`);
+    return saved ? JSON.parse(saved) : {};
+  });
   const [timeLeft, setTimeLeft] = useState(30 * 60); // fallback
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    localStorage.setItem(`exam_current_q_${chapterId}`, currentQuestionIdx);
+  }, [currentQuestionIdx, chapterId]);
+
+  useEffect(() => {
+    localStorage.setItem(`exam_answers_${chapterId}`, JSON.stringify(answers));
+  }, [answers, chapterId]);
+
+  useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await api.get(`/api/student/chapters/${chapterId}/questions/`);
+        const cachedDataStr = localStorage.getItem(`exam_data_${chapterId}`);
+        let data;
         
-        // Ensure we parse from the new backend structure
-        const data = response.data;
+        if (cachedDataStr) {
+          data = JSON.parse(cachedDataStr);
+        } else {
+          const response = await api.get(`/api/student/chapters/${chapterId}/questions/`);
+          data = response.data;
+          // Cache the data so on refresh we get the same questions in the same order
+          localStorage.setItem(`exam_data_${chapterId}`, JSON.stringify(data));
+        }
+        
         const fetchedQuestions = data.questions || [];
         
         setChapterName(data.chapter || "Exam");
@@ -139,6 +161,9 @@ const Exam = () => {
     try {
       await api.post('/api/student/submit-exam/', { chapter_id: chapterId });
       localStorage.removeItem(`exam_finish_time_${chapterId}`);
+      localStorage.removeItem(`exam_current_q_${chapterId}`);
+      localStorage.removeItem(`exam_answers_${chapterId}`);
+      localStorage.removeItem(`exam_data_${chapterId}`);
       toast.success('Exam submitted successfully!');
       navigate('/results');
     } catch (error) {
